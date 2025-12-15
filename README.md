@@ -35,6 +35,7 @@ Chia sẻ kiến thức về **Offensive Security** • **SOC** • **GRC** • 
 **TKCyber** là nền tảng blog chuyên sâu về Information Security, được xây dựng với Next.js 15 và các công nghệ hiện đại nhất.
 
 ### Nội dung chính:
+
 - 🔴 **Offensive Security** - Penetration Testing, Red Team
 - 🛡️ **SOC** - SIEM, XDR, SOAR, Threat Detection
 - 📊 **GRC** - Governance, Risk & Compliance
@@ -45,11 +46,13 @@ Chia sẻ kiến thức về **Offensive Security** • **SOC** • **GRC** • 
 ## ✨ Tính năng
 
 ### 📝 Core Features
+
 - ✅ **MDX Blog System** - Viết bài bằng Markdown + JSX
 - ✅ **Search & Category Filter** - Tìm kiếm và lọc real-time
 - ✅ **5 Blog Posts tiếng Việt** - Nội dung chất lượng cao
 
 ### 🚀 Advanced Features
+
 - ✅ **Reading Progress Bar** - Thanh tiến trình đọc (linear + circular)
 - ✅ **Related Posts** - Gợi ý bài viết liên quan thông minh
 - ✅ **Share Buttons** - Twitter, Facebook, LinkedIn, Copy link
@@ -57,12 +60,14 @@ Chia sẻ kiến thức về **Offensive Security** • **SOC** • **GRC** • 
 - ✅ **View Counter** - Đếm lượt xem mỗi bài
 
 ### 🎨 UI/UX
+
 - ✅ **Cybersecurity Theme** - Dark mode với Indigo/Cyan colors
 - ✅ **Responsive Design** - Mobile to Desktop
 - ✅ **Smooth Animations** - Glassmorphism effects
 - ✅ **AI Integration** - Gemini AI để explain security concepts
 
 ### 🔍 SEO (9/10)
+
 - ✅ **Server-Side Rendering (SSR)**
 - ✅ **Static Site Generation (SSG)**
 - ✅ **Meta tags đầy đủ** (Open Graph, Twitter Cards)
@@ -75,18 +80,21 @@ Chia sẻ kiến thức về **Offensive Security** • **SOC** • **GRC** • 
 ## 🛠️ Tech Stack
 
 ### Core
+
 - **Framework:** Next.js 15.1 (App Router)
 - **UI Library:** React 19.0
 - **Language:** TypeScript 5.8
 - **Styling:** Tailwind CSS 3.4
 
 ### Content
+
 - **MDX:** @next/mdx, next-mdx-remote
 - **Parsing:** gray-matter
 - **Syntax Highlight:** rehype-highlight
 - **Markdown:** remark-gfm
 
 ### Additional
+
 - **AI:** Google Gemini 2.5 Flash
 - **Fonts:** Inter, JetBrains Mono
 - **Icons:** Heroicons (via SVG)
@@ -96,16 +104,19 @@ Chia sẻ kiến thức về **Offensive Security** • **SOC** • **GRC** • 
 ## 🚀 Cài đặt
 
 ### Prerequisites
+
 - Node.js 18+ hoặc mới hơn
 - pnpm (recommended) hoặc npm/yarn
 
 ### Bước 1: Clone Repository
+
 ```bash
 git clone https://github.com/yourusername/tkcyber-blog.git
 cd tkcyber-blog
 ```
 
 ### Bước 2: Install Dependencies
+
 ```bash
 pnpm install
 # hoặc
@@ -113,12 +124,14 @@ npm install
 ```
 
 ### Bước 3: Setup Environment Variables
+
 ```bash
 # Tạo file .env.local
 cp .env.local.example .env.local
 ```
 
 Thêm Gemini API key vào `.env.local`:
+
 ```env
 NEXT_PUBLIC_GEMINI_API_KEY=your_gemini_api_key_here
 GEMINI_API_KEY=your_gemini_api_key_here
@@ -127,6 +140,7 @@ GEMINI_API_KEY=your_gemini_api_key_here
 > 💡 **Lấy API key:** https://ai.google.dev/
 
 ### Bước 4: Run Development Server
+
 ```bash
 pnpm dev
 ```
@@ -176,25 +190,28 @@ TKCyber/
 ### Tạo bài mới
 
 1. Tạo file MDX trong `src/content/posts/`:
+
 ```bash
 src/content/posts/ten-bai-viet.mdx
 ```
 
 2. Thêm metadata (frontmatter):
+
 ```yaml
 ---
-title: 'Tiêu đề bài viết'
-excerpt: 'Mô tả ngắn gọn (1-2 câu)'
-category: 'SOC'  # SOC, Offensive, GRC, Products, AI Security
-date: '2023-12-15'
-readTime: '10 phút đọc'
-tags: ['Tag1', 'Tag2', 'Tag3']
-author: 'TKCyber Team'
-icon: '🛡️'
+title: "Tiêu đề bài viết"
+excerpt: "Mô tả ngắn gọn (1-2 câu)"
+category: "SOC" # SOC, Offensive, GRC, Products, AI Security
+date: "2023-12-15"
+readTime: "10 phút đọc"
+tags: ["Tag1", "Tag2", "Tag3"]
+author: "TKCyber Team"
+icon: "🛡️"
 ---
 ```
 
 3. Viết nội dung bằng Markdown:
+
 ```markdown
 # Heading chính
 
@@ -212,7 +229,7 @@ nmap -sS -sV target.com
 - Item 2
 
 | Column 1 | Column 2 |
-|----------|----------|
+| -------- | -------- |
 | Data     | Data     |
 ```
 
@@ -229,6 +246,7 @@ nmap -sS -sV target.com
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new)
 
 **Hoặc manual:**
+
 ```bash
 1. Push code lên GitHub
 2. Import vào Vercel (vercel.com)
@@ -237,6 +255,7 @@ nmap -sS -sV target.com
 ```
 
 ### Build Commands
+
 ```bash
 # Development
 pnpm dev
@@ -256,6 +275,7 @@ pnpm lint
 ## 📖 Documentation
 
 ### Hướng dẫn chi tiết
+
 - 📘 [QUICKSTART.md](QUICKSTART.md) - Bắt đầu nhanh
 - 📗 [BLOG_GUIDE.md](BLOG_GUIDE.md) - Viết blog posts
 - 📙 [NEW_FEATURES.md](NEW_FEATURES.md) - Features overview
@@ -267,15 +287,21 @@ pnpm lint
 ## 🎨 Screenshots
 
 ### Homepage
+
 ![Homepage](docs/homepage-preview.png)
+
 > Hero section với animated waves và security topics
 
 ### Blog Listing
+
 ![Blog](docs/blog-preview.png)
+
 > Search, category filter, và blog posts grid
 
 ### Blog Post
+
 ![Post](docs/post-preview.png)
+
 > Reading progress, syntax highlighting, related posts
 
 ---
@@ -283,7 +309,9 @@ pnpm lint
 ## 🔧 Configuration
 
 ### Custom Theme Colors
+
 Edit `tailwind.config.ts`:
+
 ```typescript
 colors: {
   sec: {
@@ -296,14 +324,17 @@ colors: {
 ```
 
 ### Add More Blog Posts
+
 Drop `.mdx` files vào `src/content/posts/`
 
 ### Modify Navigation
+
 Edit `src/shared/constants/index.ts`:
+
 ```typescript
 export const NAV_LINKS = [
-  { label: 'Home', href: '/' },
-  { label: 'Blog', href: '/blog' },
+  { label: "Home", href: "/" },
+  { label: "Blog", href: "/blog" },
   // Add more...
 ];
 ```
@@ -312,9 +343,10 @@ export const NAV_LINKS = [
 
 ## 🤝 Contributing
 
-Contributions are welcome! 
+Contributions are welcome!
 
 ### Quy trình:
+
 1. Fork repository
 2. Create feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit changes (`git commit -m 'Add amazing feature'`)
@@ -332,15 +364,19 @@ Dự án này là mã nguồn mở. Bạn có thể sử dụng, sửa đổi v�
 ## 🌟 Features Highlights
 
 ### 📊 Reading Progress
+
 ![Progress](https://img.shields.io/badge/Progress-Linear%20%2B%20Circular-cyan)
 
 ### 🔗 Smart Related Posts
+
 ![Algorithm](https://img.shields.io/badge/Algorithm-Category%20%2B%20Tags-purple)
 
 ### 📤 Social Sharing
+
 ![Share](https://img.shields.io/badge/Share-4%20Platforms-blue)
 
 ### 👁️ View Counter
+
 ![Views](https://img.shields.io/badge/Views-API%20Powered-green)
 
 ---
@@ -348,12 +384,14 @@ Dự án này là mã nguồn mở. Bạn có thể sử dụng, sửa đổi v�
 ## 💻 Development
 
 ### Project Structure
+
 - **Feature-based architecture** - Dễ maintain
 - **Server/Client split** - Performance tối ưu
 - **Type-safe** - 100% TypeScript
 - **Reusable components** - DRY principle
 
 ### Code Quality
+
 ```
 ✓ ESLint configured
 ✓ TypeScript strict mode
@@ -366,6 +404,7 @@ Dự án này là mã nguồn mở. Bạn có thể sử dụng, sửa đổi v�
 ## 📚 Blog Posts
 
 ### Hiện có (5 bài):
+
 1. 📊 **Triển khai Wazuh - SIEM mã nguồn mở** (8 phút)
 2. 🛡️ **XDR - Phát hiện và Ứng phó Mối đe dọa** (10 phút)
 3. 🤖 **Tự động hóa Ứng phó Sự cố với SOAR** (12 phút)
@@ -386,6 +425,7 @@ Dự án này là mã nguồn mở. Bạn có thể sử dụng, sửa đổi v�
 ## 👨‍💻 Author
 
 **TKCyber Team**
+
 - Website: [tkcyber.com]
 - Twitter: [@tkcyber]
 - GitHub: [@tkcyber]
