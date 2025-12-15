@@ -39,6 +39,18 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
+  icons: {
+    icon: [
+      { url: "/logo7.png" },
+      { url: "/logo7.png", sizes: "32x32", type: "image/png" },
+      { url: "/logo7.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: [
+      { url: "/logo7.png" },
+      { url: "/logo7.png", sizes: "180x180", type: "image/png" },
+    ],
+    shortcut: ["/logo7.png"],
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
