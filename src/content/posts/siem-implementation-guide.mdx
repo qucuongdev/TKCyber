@@ -1,0 +1,318 @@
+---
+title: 'Triển khai Wazuh - SIEM mã nguồn mở cho doanh nghiệp'
+excerpt: 'Hướng dẫn chi tiết cài đặt và cấu hình Wazuh để phát hiện mối đe dọa, giám sát tính toàn vẹn hệ thống và ứng phó sự cố bảo mật.'
+category: 'SOC'
+date: '2023-10-24'
+readTime: '8 phút đọc'
+tags: ['Wazuh', 'SIEM', 'Open Source', 'SOC']
+author: 'TKCyber Team'
+icon: '📊'
+---
+
+# Triển khai Wazuh - SIEM mã nguồn mở
+
+## Giới thiệu
+
+**SIEM (Security Information and Event Management)** là nền tảng cốt lõi trong bất kỳ Security Operations Center (SOC) nào. Trong bài viết này, chúng ta sẽ tìm hiểu cách triển khai **Wazuh** - một giải pháp SIEM mã nguồn mở mạnh mẽ, hoàn toàn miễn phí và được cộng đồng tin dùng.
+
+## Wazuh là gì?
+
+Wazuh là nền tảng bảo mật mã nguồn mở cung cấp đầy đủ các tính năng:
+
+- **Intrusion Detection (IDS)** - Phát hiện xâm nhập và tấn công
+- **File Integrity Monitoring (FIM)** - Giám sát thay đổi file/registry
+- **Log Analysis** - Phân tích log tập trung từ nhiều nguồn
+- **Vulnerability Detection** - Quét và phát hiện lỗ hổng bảo mật
+- **Compliance Assessment** - Đánh giá tuân thủ (PCI DSS, GDPR, HIPAA)
+- **Incident Response** - Hỗ trợ ứng phó sự cố
+
+## Kiến trúc Wazuh
+
+Wazuh sử dụng kiến trúc **agent-server**:
+
+```
+┌─────────────────┐
+│  Wazuh Manager  │ ◄── Server trung tâm
+└────────┬────────┘
+         │
+    ┌────┴────┐
+    │         │
+┌───▼──┐  ┌──▼───┐
+│Agent │  │Agent │ ◄── Các máy được giám sát
+└──────┘  └──────┘
+```
+
+### Các thành phần chính:
+
+1. **Wazuh Manager** - Server trung tâm nhận dữ liệu, phân tích và tạo cảnh báo
+2. **Wazuh Agents** - Cài trên các máy cần giám sát, thu thập logs/events
+3. **Elastic Stack** - Lưu trữ, đánh index và visualize dữ liệu
+4. **Wazuh Dashboard** - Giao diện web quản lý và giám sát
+
+## Hướng dẫn cài đặt
+
+### Bước 1: Cài đặt Wazuh Manager
+
+Trên máy chủ Ubuntu/Debian:
+
+```bash
+# Download script cài đặt
+curl -sO https://packages.wazuh.com/4.7/wazuh-install.sh
+
+# Chạy installer (all-in-one)
+bash ./wazuh-install.sh -a
+```
+
+Script sẽ tự động cài:
+- Wazuh Manager
+- Wazuh Indexer (Elasticsearch)
+- Wazuh Dashboard (Kibana)
+
+### Bước 2: Cài đặt Agent
+
+**Trên Windows:**
+
+```powershell
+# Download installer
+Invoke-WebRequest -Uri https://packages.wazuh.com/4.x/windows/wazuh-agent-4.7.0-1.msi -OutFile wazuh-agent.msi
+
+# Cài đặt và kết nối với Manager
+msiexec.exe /i wazuh-agent.msi /q WAZUH_MANAGER='IP_CUA_MANAGER'
+```
+
+**Trên Linux:**
+
+```bash
+# Ubuntu/Debian
+wget https://packages.wazuh.com/4.x/apt/pool/main/w/wazuh-agent/wazuh-agent_4.7.0-1_amd64.deb
+dpkg -i wazuh-agent_4.7.0-1_amd64.deb
+
+# Cấu hình Manager IP
+echo "WAZUH_MANAGER='IP_CUA_MANAGER'" >> /var/ossec/etc/ossec.conf
+
+# Khởi động agent
+systemctl start wazuh-agent
+```
+
+### Bước 3: Cấu hình Rules
+
+Tạo custom rules để phát hiện các mối đe dọa cụ thể:
+
+```xml
+<!-- File: /var/ossec/etc/rules/local_rules.xml -->
+<group name="custom_rules">
+  <!-- Phát hiện brute force SSH -->
+  <rule id="100010" level="10">
+    <if_sid>5715</if_sid>
+    <match>Failed password</match>
+    <description>Phát hiện tấn công brute force SSH</description>
+  </rule>
+</group>
+```
+
+## Use Cases thực tế
+
+### 1. Phát hiện tấn công Brute Force
+
+Wazuh tự động phát hiện và cảnh báo khi có:
+
+- Nhiều lần đăng nhập thất bại liên tiếp
+- Tấn công dictionary/brute force
+- Tự động block IP kẻ tấn công
+
+**Cấu hình:**
+
+```xml
+<ossec_config>
+  <active-response>
+    <!-- Block IP sau 5 lần đăng nhập thất bại -->
+    <command>firewall-drop</command>
+    <location>local</location>
+    <rules_id>100010</rules_id>
+    <timeout>600</timeout>
+  </active-response>
+</ossec_config>
+```
+
+### 2. Giám sát File Integrity (FIM)
+
+Theo dõi mọi thay đổi trên file/folder quan trọng:
+
+```xml
+<syscheck>
+  <!-- Giám sát thư mục hệ thống -->
+  <directories check_all="yes">/etc,/usr/bin,/usr/sbin</directories>
+  
+  <!-- Giám sát real-time cho web -->
+  <directories check_all="yes" realtime="yes">/var/www</directories>
+  
+  <!-- Giám sát Windows Registry -->
+  <windows_registry>HKEY_LOCAL_MACHINE\Software</windows_registry>
+</syscheck>
+```
+
+**Khi có file thay đổi:**
+- Wazuh ghi lại: ai, khi nào, thay đổi gì
+- Gửi cảnh báo real-time
+- Lưu vào Elastic để phân tích
+
+### 3. Compliance Monitoring
+
+Wazuh tự động kiểm tra tuân thủ cho:
+
+- **PCI DSS** - Bảo mật thẻ thanh toán
+- **GDPR** - Bảo vệ dữ liệu cá nhân
+- **HIPAA** - Bảo mật y tế
+- **NIST 800-53** - Chuẩn bảo mật Mỹ
+
+Dashboard sẽ hiển thị:
+- Mức độ tuân thủ (%)
+- Các yêu cầu chưa đáp ứng
+- Hướng dẫn khắc phục
+
+## Best Practices
+
+### 1. Tinh chỉnh Rules
+
+```bash
+# Giảm false positives
+- Review logs hàng ngày
+- Tạo whitelist cho hoạt động hợp lệ
+- Điều chỉnh severity levels
+
+# Tăng detection rate
+- Thêm custom rules cho môi trường của bạn
+- Tích hợp Threat Intelligence feeds
+- Enable behavioural analysis
+```
+
+### 2. Quản lý Agents
+
+```bash
+# Kiểm tra agent status
+/var/ossec/bin/agent_control -l
+
+# Restart agent
+systemctl restart wazuh-agent
+
+# View agent logs
+tail -f /var/ossec/logs/ossec.log
+```
+
+### 3. Log Retention
+
+Cân bằng giữa lưu trữ và compliance:
+
+```
+- Short-term (hot): 7-30 ngày trên SSD
+- Medium-term (warm): 30-90 ngày trên HDD
+- Long-term (cold): 90-365 ngày trên archive
+```
+
+### 4. Alert Management
+
+```yaml
+Priority levels:
+  - CRITICAL (12-15): Xử lý ngay lập tức
+  - HIGH (9-11): Xử lý trong 1 giờ
+  - MEDIUM (6-8): Xử lý trong 24h
+  - LOW (1-5): Review định kỳ
+```
+
+## Performance Tuning
+
+Để tối ưu hiệu suất:
+
+```xml
+<ossec_config>
+  <global>
+    <!-- Tăng số worker threads -->
+    <analysisd>
+      <worker_threads>4</worker_threads>
+    </analysisd>
+    
+    <!-- Enable JSON output -->
+    <jsonout_output>yes</jsonout_output>
+  </global>
+</ossec_config>
+```
+
+**Monitoring:**
+- CPU usage < 70%
+- Memory usage < 80%
+- Disk I/O stable
+- Network latency < 100ms
+
+## Tích hợp với các công cụ khác
+
+Wazuh có thể tích hợp với:
+
+### SOAR Platforms
+- **TheHive** - Case management
+- **Shuffle** - Automation workflows
+- **Cortex** - Threat intelligence
+
+### Threat Intelligence
+- **MISP** - Sharing IOCs
+- **VirusTotal** - Malware detection
+- **AbuseIPDB** - IP reputation
+
+### Communication
+- **Slack** - Real-time alerts
+- **Email** - Alert notifications
+- **PagerDuty** - On-call management
+
+## Troubleshooting
+
+### Agent không kết nối được?
+
+```bash
+# Check firewall
+ufw allow 1514/tcp
+ufw allow 1515/tcp
+
+# Check agent status
+systemctl status wazuh-agent
+
+# View logs
+tail -f /var/ossec/logs/ossec.log
+```
+
+### Dashboard không load?
+
+```bash
+# Restart services
+systemctl restart wazuh-dashboard
+
+# Check Elasticsearch
+curl -X GET "localhost:9200/_cluster/health"
+```
+
+## Kết luận
+
+Wazuh là giải pháp SIEM mạnh mẽ, hoàn toàn miễn phí với đầy đủ tính năng:
+
+✅ **Phát hiện threats real-time**  
+✅ **File integrity monitoring**  
+✅ **Vulnerability scanning**  
+✅ **Compliance reporting**  
+✅ **Dễ dàng scale và mở rộng**  
+✅ **Cộng đồng lớn, tài liệu phong phú**  
+
+Wazuh là lựa chọn tuyệt vời cho:
+- Doanh nghiệp vừa và nhỏ
+- Tổ chức muốn xây dựng SOC
+- Môi trường cần compliance
+- Budget hạn chế
+
+## Tài liệu tham khảo
+
+- [Wazuh Documentation](https://documentation.wazuh.com)
+- [Wazuh GitHub](https://github.com/wazuh/wazuh)
+- [Community Forum](https://wazuh.com/community/)
+- [Ruleset](https://documentation.wazuh.com/current/user-manual/ruleset/)
+
+---
+
+**Tags:** #SIEM #Wazuh #SOC #OpenSource #Monitoring
+
